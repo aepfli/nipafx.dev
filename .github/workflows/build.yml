@@ -4,6 +4,38 @@ on:
     branches: [ master ]
 
 jobs:
+  lint:
+    name: Lint changelog file
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Run spell check    
+      uses: actions/setup-node@v1
+      with:
+        node-version: "15"
+    - name: Run Lint
+      run: npx markdownlint-cli content
+
+  markdown-spellcheck:
+    name: Spellcheck
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master  
+    - name: Run spell check    
+      uses: actions/setup-node@v1
+      with:
+        node-version: "15"
+    - name: Install Spellcheck
+      run: npm i markdown-spellcheck -g
+    - name: Run Spellcheck
+      env:
+        FORCE_COLOR: 1
+      run: |
+        shopt -s globstar && ls -1 content/**/*.md
+        shopt -s globstar && mdspell --en-us -n -r content/**/*.md
+
   build:
     runs-on: ubuntu-latest
     steps:
